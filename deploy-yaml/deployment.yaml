@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+  template:
+    metadata:
+      labels:
+        app: my-app
+        version: "v1"
+    spec:
+      containers:
+      - image: nginx:1.21
+        name: my-app
+        ports:
+          - containerPort: 8080
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-1
+  labels:
+    name: my-app
+    version: "v1"
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: my-app
+    version: "v1"
+  type: NodePort
+
